@@ -1,14 +1,14 @@
 #!/bin/bash\
-keyVal=$(gpg --list-secret-keys --keyid-format=long|awk '/uid/{if (length($3)>0) print $3}')
+useID=$(gpg --list-secret-keys --keyid-format=long|awk '/uid/{if (length($3)>0) print $3}')
 echo "enter 0 if you want to generate new gpg key. Otherwise input 1,2,3 respectively for particular user ID"
 a=1
 while IFS= read -r line;
 	do echo  "${a} '${line}'";
 	export a=$((a+1))
-done<<<"$keyVal"
+done<<<"$useID"
 no_of_keys=a
 read val
-keyVal=$(gpg --list-secret-keys --keyid-format=long|awk '/sec/{if (length($2)>0) print $2}')
+key=$(gpg --list-secret-keys --keyid-format=long|awk '/sec/{if (length($2)>0) print $2}')
 a=1
 while IFS= read -r line;
 do
@@ -25,10 +25,10 @@ do
 		break
 	fi
 	export a=$((a+1))
-done<<<"$keyVal"
+done<<<"$key"
 if [[ "$val" == "0" ]]; then
 gpg --default-new-key-algo rsa4096 --gen-key
-keyVal=$(gpg --list-secret-keys --keyid-format=long|awk '/sec/{if (length($2)>0) print $2}')
+key=$(gpg --list-secret-keys --keyid-format=long|awk '/sec/{if (length($2)>0) print $2}')
 a=1
 export no_of_keys=$((no_of_keys+1))
 while IFS= read -r line;
@@ -43,7 +43,7 @@ if [[ "$no_of_keys" == "$a" ]]; then
         break
 fi
 export a=$((a+1))
-done<<<"$keyVal"
+done<<<"$key"
 fi
 
 
